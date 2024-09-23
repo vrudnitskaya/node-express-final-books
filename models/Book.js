@@ -41,9 +41,19 @@ const BookSchema = new mongoose.Schema({
       required: true,
     },
     genre: {
-      type: [String], 
-      enum: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Fantasy', 'Biography', 'History', 'Mystery', 'Romance', 'Horror', 'Children', 'Adult', 'Young Adult'], 
+      type: String, 
+      enum: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Fantasy', 'Biography', 'History', 'Mystery', 'Romance', 'Horror'], 
       required: true
+    },
+    ageCategory: {
+      type: String,
+      enum: ['Children', 'Young Adult', 'Adult'],
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['To Read', 'Reading', 'Read'],
+      default: 'To Read'
     },
     language: {
       type: String,
