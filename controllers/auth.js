@@ -38,10 +38,26 @@ const login = async(req,res) => {
     };
 
     const token = user.createJWT();
-    res.status(StatusCodes.OK).json({ user, token });
+
+    const userInfo = user.toObject();
+    delete userInfo.password;
+    
+    res.status(StatusCodes.OK).json({ userInfo, token });
+};
+
+const logout = async (req, res) => {
+    try {
+        res.status(StatusCodes.OK).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.error('Error during logout:', error);
+        res
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ message: 'Logout failed' });
+    }
 };
 
 module.exports = {
     register,
-    login
+    login,
+    logout
 };
