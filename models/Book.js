@@ -31,7 +31,6 @@ const BookSchema = new mongoose.Schema({
     },
     isbn: {
       type: String,
-      unique: true,
       default: '',
     },
     description: {

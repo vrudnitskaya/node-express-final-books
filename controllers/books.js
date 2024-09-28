@@ -3,8 +3,13 @@ const Book = require('../models/Book');
 const { StatusCodes } = require('http-status-codes');
 
 const getAllBooks = async(req,res) => {
-    const books = await Book.find({ createdBy: req.user.userId}).sort('createdAt');
-    res.status(StatusCodes.OK).json({ books, count: books.length});
+    const { limit = 9, skip = 0 } = req.query;
+    const books = await Book.find({ createdBy: req.user.userId })
+                            .sort('createdAt')
+                            .limit(Number(limit)) 
+                            .skip(Number(skip)); 
+
+    res.status(StatusCodes.OK).json({ books, count: books.length });
 };
 
 const getBook = async(req,res) => {
