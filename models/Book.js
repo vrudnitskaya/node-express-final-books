@@ -41,12 +41,41 @@ const BookSchema = new mongoose.Schema({
     },
     genre: {
       type: String, 
-      enum: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Fantasy', 'Biography', 'History', 'Mystery', 'Romance', 'Horror'], 
+      enum: [
+        'Fiction', 
+        'Literature', 
+        'Folklore & Mythology', 
+        'General Fiction', 
+        'Graphic Novels & Comics',
+        'Historical Fiction', 
+        'Horror', 
+        'Literary Fiction', 
+        'Manga', 
+        'Mystery', 
+        'Poetry', 
+        'Romance', 
+        'Science Fiction & Fantasy', 
+        'Thrillers', 
+        'Nonfiction',
+        'Biography', 
+        'Business Books', 
+        'Cookbooks, Food & Wine', 
+        'Education', 
+        'History', 
+        'Medicine & Nursing', 
+        'Philosophy', 
+        'Psychology', 
+        'Religion', 
+        'Science & Technology',
+        'Social Sciences', 
+        'Sports', 
+        'True Crime'
+    ], 
       required: true
     },
     ageCategory: {
       type: String,
-      enum: ['Children', 'Young Adult', 'Adult'],
+      enum: ['Children', 'Teens & Young Adult', 'Adult'],
       required: true
     },
     status: {
@@ -60,7 +89,7 @@ const BookSchema = new mongoose.Schema({
     },
     coverImageUrl: {
       type: String,
-      default: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books_23-2149331952.jpg'
+      default: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149330605.jpg'
     },
     createdBy: {
         type:mongoose.Types.ObjectId,
