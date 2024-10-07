@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('express-async-errors');
+const logger = require('morgan');
 const cors = require('cors');
 const express = require('express');
 const app = express();
@@ -9,6 +10,8 @@ const authenticateUser = require('./middleware/authentication');
 
 const authRouter = require('./routes/auth');
 const booksRouter  = require('./routes/books');
+
+app.use(logger('dev'));
 
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
