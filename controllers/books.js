@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes');
 const getAllBooks = async(req,res) => {
     const { limit = 9, skip = 0 } = req.query;
     const books = await Book.find({ createdBy: req.user.userId })
-                            .sort('createdAt')
+                            .sort('title')
                             .limit(Number(limit)) 
                             .skip(Number(skip)); 
 
@@ -35,6 +35,7 @@ const updateBook = async (req,res) => {
         { field: 'author', value: body.author },
         { field: 'publisher', value: body.publisher },
         { field: 'publishedYear', value: body.publishedYear },
+        { field: 'ageCategory', value: body.ageCategory },
         { field: 'pages', value: body.pages },
         { field: 'description', value: body.description },
         { field: 'genre', value: body.genre }
