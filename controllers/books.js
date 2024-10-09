@@ -3,8 +3,30 @@ const Book = require('../models/Book');
 const { StatusCodes } = require('http-status-codes');
 
 const getAllBooks = async(req,res) => {
-    const { limit = 9, skip = 0 } = req.query;
-    const books = await Book.find({ createdBy: req.user.userId })
+    const { query, limit = 9, skip = 0, ageCategory, status, genre } = req.query;
+    const queryObj = { createdBy: req.user.userId };
+
+    //search by title, author, isbn
+    if(query) {
+        queryObj.$or = [
+            { title: { $regex: query, $options: 'i' } }, 
+            { author: { $regex: query, $options: 'i' } },
+            { isbn: { $regex: query, $options: 'i' } }
+        ]
+    }
+    
+    // Filter by multiple choice
+    if (ageCategory) {
+        queryObj.ageCategory = { $in: ageCategory.split(',') };
+    }
+    if (status) {
+        queryObj.status = { $in: status.split(',') };
+    }
+    if (genre) {
+        queryObj.genre = { $in: genre.split(',') };
+    }
+
+    const books = await Book.find(queryObj)
                             .sort('title')
                             .limit(Number(limit)) 
                             .skip(Number(skip)); 
@@ -23,12 +45,21 @@ const getBook = async(req,res) => {
 
 const createBook = async(req,res) => {
     req.body.createdBy = req.user.userId;
+
+    if (!req.body.coverImageUrl) {
+        req.body.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
+    }
+    
     const book = await Book.create(req.body)
     res.status(StatusCodes.CREATED).json({ book });
 };
 
 const updateBook = async (req,res) => {
     const { body, user: { userId }, params: { id: bookId } } = req;
+
+    if (!body.coverImageUrl) {
+        body.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
+    }
 
     const requiredFields = [
         { field: 'title', value: body.title },

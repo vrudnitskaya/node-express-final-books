@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { validateImageURL } = require('../middleware/validateImageUrl');
 
 const BookSchema = new mongoose.Schema({
     title: {
@@ -74,7 +75,11 @@ const BookSchema = new mongoose.Schema({
     },
     coverImageUrl: {
       type: String,
-      default: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149330605.jpg'
+      default: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149330605.jpg',
+      validate: {
+        validator: validateImageURL,
+        message: 'Invalid image URL. It must end with .jpg or .png.',
+      },
     },
     createdBy: {
         type:mongoose.Types.ObjectId,
