@@ -75,7 +75,7 @@ const BookSchema = new mongoose.Schema({
     },
     coverImageUrl: {
       type: String,
-      default: 'https://img.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_23-2149330605.jpg',
+      default: process.env.DEFAULT_COVER_IMAGE_URL,
       validate: {
         validator: validateImageURL,
         message: 'Invalid image URL. It must end with .jpg or .png.',

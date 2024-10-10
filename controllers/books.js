@@ -3,7 +3,7 @@ const Book = require('../models/Book');
 const { StatusCodes } = require('http-status-codes');
 
 const getAllBooks = async(req,res) => {
-    const { query, limit = 9, skip = 0, ageCategory, status, genre } = req.query;
+    const { query, limit = 9, skip = 0, ageCategory, status, genre, sort } = req.query;
     const queryObj = { createdBy: req.user.userId };
 
     //search by title, author, isbn
@@ -25,9 +25,9 @@ const getAllBooks = async(req,res) => {
     if (genre) {
         queryObj.genre = { $in: genre.split(',') };
     }
-
+    
     const books = await Book.find(queryObj)
-                            .sort('title')
+                            .sort(sort)
                             .limit(Number(limit)) 
                             .skip(Number(skip)); 
 
