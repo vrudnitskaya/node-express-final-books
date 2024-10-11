@@ -81,6 +81,9 @@ const BookSchema = new mongoose.Schema({
         message: 'Invalid image URL. It must end with .jpg or .png.',
       },
     },
+    coverImagePublicId: {
+      type: String,
+    },
     createdBy: {
         type:mongoose.Types.ObjectId,
         ref:'User',

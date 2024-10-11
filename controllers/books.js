@@ -1,3 +1,4 @@
+const cloudinary = require('cloudinary').v2;
 const { NotFoundError, BadRequestError } = require('../errors');
 const Book = require('../models/Book');
 const { StatusCodes } = require('http-status-codes');
@@ -44,35 +45,56 @@ const getBook = async(req,res) => {
 };
 
 const createBook = async(req,res) => {
-    req.body.createdBy = req.user.userId;
+    const { coverImageUrl, ...bookData } = req.body;
+    bookData.createdBy = req.user.userId;
 
-    if (!req.body.coverImageUrl) {
-        req.body.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
+    if (coverImageUrl) {
+        const result = await cloudinary.uploader.upload(coverImageUrl, { folder: 'books' });
+        bookData.coverImageUrl = result.secure_url;
+        bookData.coverImagePublicId = result.public_id;
+    }else {
+        bookData.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
     }
     
-    const book = await Book.create(req.body)
+    const book = await Book.create(bookData)
     res.status(StatusCodes.CREATED).json({ book });
 };
 
 const updateBook = async (req,res) => {
-    const { body, user: { userId }, params: { id: bookId } } = req;
+    const { coverImageUrl, ...updateData } = req.body;
+    const { id: bookId } = req.params;
+    const { user: { userId } } = req;
 
-    if (!body.coverImageUrl) {
-        body.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
+    const book = await Book.findOne({ _id: bookId, createdBy: userId });
+    if (!book) {
+        throw new NotFoundError(`No book with id ${bookId}`);
     }
 
+    if (coverImageUrl) {
+        if (coverImageUrl !== book.coverImageUrl) {
+            if (book.coverImagePublicId) {
+                await cloudinary.uploader.destroy(book.coverImagePublicId);
+            }
+            const result = await cloudinary.uploader.upload(coverImageUrl, { folder: 'books' });
+            updateData.coverImageUrl = result.secure_url;
+            updateData.coverImagePublicId = result.public_id;
+        }
+    } else {
+        updateData.coverImageUrl = process.env.DEFAULT_COVER_IMAGE_URL;
+    }
+    
+// checking that all required fields are filled in.
     const requiredFields = [
-        { field: 'title', value: body.title },
-        { field: 'author', value: body.author },
-        { field: 'publisher', value: body.publisher },
-        { field: 'publishedYear', value: body.publishedYear },
-        { field: 'ageCategory', value: body.ageCategory },
-        { field: 'pages', value: body.pages },
-        { field: 'description', value: body.description },
-        { field: 'genre', value: body.genre }
+        { field: 'title', value: updateData.title },
+        { field: 'author', value: updateData.author },
+        { field: 'publisher', value: updateData.publisher },
+        { field: 'publishedYear', value: updateData.publishedYear },
+        { field: 'ageCategory', value: updateData.ageCategory },
+        { field: 'pages', value: updateData.pages },
+        { field: 'description', value: updateData.description },
+        { field: 'genre', value: updateData.genre }
     ];
     
-    // checking that all required fields are filled in.
     const errors = [];
     for (const { field, value } of requiredFields) {
         if (value === undefined || value === null || value === '') {
@@ -83,23 +105,24 @@ const updateBook = async (req,res) => {
         throw new BadRequestError(errors.join(', '));
     };
     
-    const book = await Book.findOneAndUpdate(
-        { _id: bookId, createdBy: userId },
-        body,
-        { new: true, runValidators: true }
-    );
-    if (!book) {
-        throw new NotFoundError(`No book with id ${bookId}`);
-    }
-    res.status(StatusCodes.OK).json({ book });
+    const updatedBook = await Book.findByIdAndUpdate(bookId, updateData, { new: true, runValidators: true });
+
+    res.status(StatusCodes.OK).json({ updatedBook });
 };
 
 const deleteBook = async(req,res) => {
     const { user: { userId }, params: { id: bookId }} = req;
-    const book = await Book.findOneAndDelete({ _id: bookId, createdBy: userId });
-    if(!book){
+    
+    const book = await Book.findOne({ _id: bookId, createdBy: userId });
+    if (!book) {
         throw new NotFoundError(`No book with id ${bookId}`);
     }
+    
+    if (book.coverImagePublicId) {
+        await cloudinary.uploader.destroy(book.coverImagePublicId);
+    }
+    
+    await Book.findOneAndDelete({ _id: bookId, createdBy: userId });
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
 

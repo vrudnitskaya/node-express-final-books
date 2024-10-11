@@ -3,7 +3,15 @@ require('express-async-errors');
 const logger = require('morgan');
 const cors = require('cors');
 const express = require('express');
+const cloudinary = require('cloudinary').v2;
+
 const app = express();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const connectDB = require('./db/connect');
 const authenticateUser = require('./middleware/authentication');
