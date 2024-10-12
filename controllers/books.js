@@ -71,7 +71,7 @@ const updateBook = async (req,res) => {
     }
 
     if (coverImageUrl) {
-        if (coverImageUrl !== book.coverImageUrl) {
+        if(coverImageUrl !== book.coverImageUrl && coverImageUrl !== process.env.DEFAULT_COVER_IMAGE_URL) {
             if (book.coverImagePublicId) {
                 await cloudinary.uploader.destroy(book.coverImagePublicId);
             }
