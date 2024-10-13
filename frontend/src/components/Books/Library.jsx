@@ -38,19 +38,25 @@ const Library = () => {
     const loadMoreBooks = async (reset = false) => {
         const limit = 12;
         try {
-            const response = await getAllBooks(limit, reset ? 0 : skip, token, search.term, filters, sortOption.value); //sort
+            const response = await getAllBooks(limit, reset ? 0 : skip, token, search.term, filters, sortOption.value); 
             if (response.status === 200) {
+                const newBooks = response.data.books;
                 if (reset) {
-                    setBooks(response.data.books);
+                    setBooks(newBooks);
                     setSkip(limit);
-                    setHasMore(response.data.books.length === limit);
-                    setSelectedBook(response.data.books[0]);
+                    setHasMore(newBooks.length === limit);
+                    setSelectedBook(newBooks[0]);
                 } else {
-                    setBooks((prevBooks) => [...prevBooks, ...response.data.books]);
+                    setBooks((prevBooks) => {
+                        const uniqueBooks = newBooks.filter(
+                            (newBook) => !prevBooks.some((prevBook) => prevBook._id === newBook._id)
+                        );
+                        return [...prevBooks, ...uniqueBooks];
+                    });
                     setSkip((prevSkip) => prevSkip + limit);
-                    setHasMore(response.data.books.length === limit);
+                    setHasMore(newBooks.length === limit);
                 }
-                setIsResults(response.data.books.length === 0);
+                setIsResults(newBooks.length === 0);
                 setIsLoading(false);
             }
         } catch (error) {

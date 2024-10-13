@@ -38,7 +38,6 @@ const EditBook = () => {
         const getBookDetails = async () => {
             try {
                 const response = await getSingleBook(token, bookId);
-                console.log('resp',response.data.book)
                 if (response.data.book) {
                     setSelectedLanguage({
                         value: response.data.book.language,
@@ -79,7 +78,7 @@ const EditBook = () => {
 
         getBookDetails();
     }, [bookId, token]);
-   
+
     if (isLoading) return <Spinner />;
     return (
         <div className="w-full h-full bg-lightGreen flex flex-col items-center">

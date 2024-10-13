@@ -127,7 +127,7 @@ const useForm = () => {
             setFormErrors({ ...formErrors, form: error.message })
         }
     };
-    console.log('formData', formData)
+    
     return {
         selectedAgeCategory,
         setSelectedAgeCategory,
