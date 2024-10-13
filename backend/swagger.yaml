@@ -1,0 +1,324 @@
+openapi: 3.0.0
+info:
+  title: My Beloved Library API
+  description: API for managing books from user's personal library.
+  version: 1.0.0
+servers:
+  # - url: 'https://my-beloved-library.onrender.com'
+  #   description: Production server
+  - url: 'http://localhost:3000/api/v1'
+    description: Development server
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register User
+      operationId: RegisterUser
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+            example:
+              firstName: bob
+              lastName: white
+              email: bob@gmail.com
+              password: secret
+        required: true
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Bad request
+      security: []  
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+            example:
+              email: helen@gmail.com
+              password: secret
+        required: true
+      responses:
+        '200':
+          description: User logged in successfully
+        '401':
+          description: Unauthorized
+      security: []  
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      responses:
+        '200':
+          description: User logged out successfully
+        '500':
+          description: Logout failed
+      security:
+        - BearerAuth: [] 
+
+  /books:
+    post:
+      tags:
+        - Books
+      summary: Add book
+      security:
+        - BearerAuth: [] 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+            example:
+              title: Stuart Little
+              author: E. B White
+              publisher: Harper & Row
+              publishedYear: 1973
+              ageCategory: Children
+              pages: 131
+              description: Stuart Little is no ordinary mouse. Born to a family of humans, he lives in New York City with his parents, his older brother George, and Snowbell the cat.
+              genre: Animal Stories
+          required: true
+      responses:
+        '201':
+          description: Book added successfully
+        '400':
+          description: Bad request
+
+    get:
+      tags:
+        - Books
+      summary: Get all books
+      security:
+        - BearerAuth: [] 
+      responses:
+        '200':
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    author:
+                      type: string
+
+  /books/{id}:
+    get:
+      tags:
+        - Books
+      summary: Get single book
+      security:
+        - BearerAuth: []  
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the book to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single book
+        '404':
+          description: Book not found
+
+    patch:
+      tags:
+        - Books
+      summary: Update book
+      security:
+        - BearerAuth: []  
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the book to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookRequest'
+              example:
+                title: Stuart Little
+                author: E. B. White
+                publisher: Harper & Row
+                publishedYear: 2020
+                ageCategory: Children
+                pages: 165
+                description: Stuart Little is no ordinary mouse. Born to a family of humans, he lives in New York City with his parents, his older brother George, and Snowbell the cat.
+                genre: Animal Stories
+      responses:
+        '200':
+          description: Book updated successfully
+        '404':
+          description: Book not found
+
+    delete:
+      tags:
+        - Books
+      summary: Delete book
+      security:
+        - BearerAuth: []  
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the book to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Book deleted successfully
+        '404':
+          description: Book not found
+
+components:
+  schemas:
+    RegisterUserRequest:
+      title: RegisterUserRequest
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        firstName: bob
+        lastName: white
+        email: bob@gmail.com
+        password: secret
+    LoginUserRequest:
+      title: LoginUserRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: helen@gmail.com
+        password: secret
+    CreateBookRequest:
+      title: CreateBookRequest
+      required:
+        - title
+        - author
+        - publisher
+        - publishedYear
+        - ageCategory
+        - pages
+        - description
+        - genre
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        publishedYear:
+          type: integer
+        ageCategory:
+          type: string
+        pages:
+          type: integer
+        description:
+          type: string
+        genre:
+          type: string
+      example:
+        title: Stuart Little
+        author: E. B White
+        publisher: Harper & Row
+        publishedYear: 1973
+        ageCategory: Children
+        pages: 131
+        description: Stuart Little is no ordinary mouse. Born to a family of humans, he lives in New York City with his parents, his older brother George, and Snowbell the cat.
+        genre: Animal Stories
+    UpdateBookRequest:
+      title: UpdateBookRequest
+      required:
+        - title
+        - author
+        - publisher
+        - publishedYear
+        - ageCategory
+        - pages
+        - description
+        - genre
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        publisher:
+          type: string
+        publishedYear:
+          type: integer
+        ageCategory:
+          type: string
+        pages:
+          type: integer
+        description:
+          type: string
+        genre:
+          type: string
+      example:
+        title: Stuart Little
+        author: E. B. White
+        publisher: Harper & Row
+        publishedYear: 2020
+        ageCategory: Children
+        pages: 165
+        description: Stuart Little is no ordinary mouse. Born to a family of humans, he lives in New York City with his parents, his older brother George, and Snowbell the cat.
+        genre: Animal Stories
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
+
+security:
+  - BearerAuth: []  
+
+tags:
+  - name: Authentication
+    description: ''
+  - name: Books
+    description: ''
