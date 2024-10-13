@@ -3,8 +3,8 @@ require('express-async-errors');
 const logger = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const xssClean = require('xss-clean');
+const xss = require('xss-clean');
+const rateLimiter = require('express-rate-limit');
 const express = require('express');
 const cloudinary = require('cloudinary').v2;
 
