@@ -47,6 +47,9 @@ const getBook = async(req,res) => {
 const createBook = async(req,res) => {
     const { coverImageUrl, ...bookData } = req.body;
     bookData.createdBy = req.user.userId;
+    
+    bookData.status = req.body.status || 'To Read';
+    bookData.language = req.body.language || 'English';
 
     if (coverImageUrl) {
         const result = await cloudinary.uploader.upload(coverImageUrl, { folder: 'books' });
