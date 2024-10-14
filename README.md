@@ -4,6 +4,9 @@
 
 This application allows anyone to create an account and store information about books from their personal library.
 
+## Author
+[Valentina Rudnitskaya](https://github.com/vrudnitskaya)
+  
 ## Technologies Used
 
 Our front-end is powered by a suite of modern tools and libraries to ensure a responsive, efficient, and visually appealing user experience:
@@ -132,5 +135,5 @@ To properly run this application, you need to set up environment variables. This
   CLOUDINARY_API_SECRET=your_secret_API
   ```
 
-## Author
-- [Valentina Rudnitskaya](https://github.com/vrudnitskaya)
+## API Documentation
+This project includes comprehensive API documentation generated with [Swagger](https://swagger.io/). You can explore and test the API endpoints using the Swagger UI available at: `http://localhost:8000/api-docs`. Ensure that you have the server running before accessing the documentation.
