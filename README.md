@@ -136,4 +136,4 @@ To properly run this application, you need to set up environment variables. This
   ```
 
 ## API Documentation
-This project includes comprehensive API documentation generated with [Swagger](https://swagger.io/). You can explore and test the API endpoints using the Swagger UI available at: `http://localhost:8000/api-docs`. Ensure that you have the server running before accessing the documentation.
+This project includes comprehensive API documentation generated with [Swagger](https://swagger.io/). You can explore and test the API endpoints using the Swagger UI available at: `http://localhost:3000/api-docs`. Ensure that you have the server running before accessing the documentation.
