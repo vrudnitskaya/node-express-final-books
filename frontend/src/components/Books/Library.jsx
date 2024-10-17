@@ -42,10 +42,9 @@ const Library = () => {
             if (response.status === 200) {
                 const newBooks = response.data.books;
                 if (reset) {
-                    setBooks(newBooks);
-                    setSkip(limit);
-                    setHasMore(newBooks.length === limit);
-                    setSelectedBook(newBooks[0]);
+                    setBooks(newBooks);  
+                    setSkip(limit);      
+                    setSelectedBook(newBooks[0] || null); 
                 } else {
                     setBooks((prevBooks) => {
                         const uniqueBooks = newBooks.filter(
@@ -53,16 +52,16 @@ const Library = () => {
                         );
                         return [...prevBooks, ...uniqueBooks];
                     });
-                    setSkip((prevSkip) => prevSkip + limit);
-                    setHasMore(newBooks.length === limit);
+                    setSkip((prevSkip) => prevSkip + limit); 
                 }
-                setIsResults(newBooks.length === 0);
-                setIsLoading(false);
+                setHasMore(newBooks.length === limit);
+                setIsResults(books.length === 0 && newBooks.length === 0);
+                setIsLoading(false); 
             }
         } catch (error) {
             console.error('Error loading more books:', error);
             setIsLoading(false);
-        }
+        } 
     };
 
     useEffect(() => {
